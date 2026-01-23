@@ -74,6 +74,168 @@ assignment-1-jsnapoli1/
 
 (Disclosure: The above file tree was generated as markdown text by Claude Code, to simplify formatting)
 
+## Quick Start
+
+### Prerequisites
+- Linux environment (native or VM)
+- Git with submodule support
+- CMake 3.0+
+- GCC or compatible C compiler
+- Bash shell
+
+### Getting Started
+```bash
+# Clone the repository (if not already done)
+git clone <repository-url>
+cd assignment-1-jsnapoli1
+
+# Initialize submodules (required for testing framework)
+git submodule update --init --recursive
+
+# Run unit tests
+./unit-test.sh
+
+# Run full test suite
+./full-test.sh
+
+# Test the finder/writer scripts directly
+./finder-app/finder-test.sh
+```
+
+## Build & Test
+
+### Build System
+The project uses CMake to compile C source files and Unity test framework for unit testing.
+
+```bash
+# Build and run unit tests
+./unit-test.sh
+```
+
+This script:
+1. Creates a `build/` directory
+2. Runs CMake to generate Makefiles
+3. Compiles all sources and tests
+4. Executes the test binary
+
+### Test Suites
+
+| Script | Purpose | Command |
+|--------|---------|---------|
+| `unit-test.sh` | Compile and run C unit tests | `./unit-test.sh` |
+| `full-test.sh` | Run unit tests + integration tests | `./full-test.sh` |
+| `finder-test.sh` | Integration test for shell scripts | `./finder-app/finder-test.sh` |
+
+### CI/CD Pipelines
+- **GitHub Actions**: Triggers on all pushes, runs in Docker containers
+- **GitLab CI**: Alternative pipeline with Docker-in-Docker support
+
+## Technical Reference
+
+### finder.sh
+
+Recursively searches a directory for files containing a specified string.
+
+**Syntax:**
+```bash
+./finder-app/finder.sh <filesdir> <searchstr>
+```
+
+**Parameters:**
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `filesdir` | string | Path to directory to search |
+| `searchstr` | string | Text to search for within files |
+
+**Exit Codes:**
+| Code | Meaning |
+|------|---------|
+| 0 | Success |
+| 1 | Missing arguments or invalid directory |
+
+**Example:**
+```bash
+./finder-app/finder.sh /tmp/data "hello"
+# Output: The number of files are 5 and the number of matching lines are 3
+```
+
+### writer.sh
+
+Creates a file with specified content, creating parent directories as needed.
+
+**Syntax:**
+```bash
+./finder-app/writer.sh <writefile> <writestr>
+```
+
+**Parameters:**
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `writefile` | string | Full path to file to create |
+| `writestr` | string | Content to write to the file |
+
+**Exit Codes:**
+| Code | Meaning |
+|------|---------|
+| 0 | Success |
+| 1 | Missing arguments or write failure |
+
+**Example:**
+```bash
+./finder-app/writer.sh /tmp/test/output.txt "Hello, World!"
+# Creates /tmp/test/output.txt containing "Hello, World!"
+```
+
+### C API Reference
+
+#### autotest-validate.c
+
+| Function | Return Type | Description |
+|----------|-------------|-------------|
+| `this_function_returns_true()` | `bool` | Always returns `true` |
+| `this_function_returns_false()` | `bool` | Always returns `false` |
+| `my_username()` | `const char*` | Returns the student username (`"jsnapoli1"`) |
+
+#### Test_validate_username.c
+
+| Function | Description |
+|----------|-------------|
+| `test_validate_my_username()` | Unity test that compares `my_username()` return value with `conf/username.txt` |
+
+## Architecture Overview
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        Test Execution                           │
+├─────────────────────────────────────────────────────────────────┤
+│  full-test.sh                                                   │
+│       │                                                         │
+│       ├── unit-test.sh ─────────────────────────┐               │
+│       │       │                                 │               │
+│       │       ├── CMake Build                   │               │
+│       │       │       └── Unity Test Framework  │               │
+│       │       │               ├── Test_hello.c  │               │
+│       │       │               ├── Test_assignment_validate.c    │
+│       │       │               └── Test_validate_username.c      │
+│       │       │                       │                         │
+│       │       │                       └── autotest-validate.c   │
+│       │                                                         │
+│       └── assignment-autotest/test/assignment1/assignment-test.sh
+│               │                                                 │
+│               └── finder-test.sh                                │
+│                       │                                         │
+│                       ├── writer.sh (creates test files)        │
+│                       └── finder.sh (searches test files)       │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+## Configuration Files
+
+| File | Purpose | Content |
+|------|---------|---------|
+| `conf/username.txt` | Student identifier for git submissions | `jsnapoli1` |
+| `conf/assignment.txt` | Assignment number for test routing | `assignment1` |
+
 ## AI Use
 
 Claude Code was utilized for this project in conjuction with the course's AI policy. Each individual file has a link to a Github Gist that shows how Claude was used.
